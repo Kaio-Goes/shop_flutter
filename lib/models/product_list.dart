@@ -8,26 +8,29 @@ import 'package:shop/models/product.dart';
 import '../utils/constants.dart';
 
 class ProductList with ChangeNotifier {
-  final List<Product> _items = [];
+  String token;
+  List<Product> item = [];
 
-  List<Product> get items => [..._items];
+  List<Product> get items => [...item];
   List<Product> get favoriteItems =>
-      _items.where((element) => element.isFavorite).toList();
+      item.where((element) => element.isFavorite).toList();
+
+  ProductList(this.token, this.item);
 
   int get itemsCount {
-    return _items.length;
+    return item.length;
   }
 
   Future<void> loadProducts() async {
-    _items.clear();
+    item.clear();
 
     final response =
-        await http.get(Uri.parse("${Constants.productBaseUrl}.json"));
+        await http.get(Uri.parse("${Constants.productBaseUrl}.json?=auth=$token"));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
 
     data.forEach((productId, productData) {
-      _items.add(
+      item.add(
         Product(
           id: productId,
           name: productData['name'],
@@ -70,7 +73,7 @@ class ProductList with ChangeNotifier {
             }));
 
     final id = jsonDecode(response.body)['name'];
-    _items.add(
+    item.add(
       Product(
           id: id,
           name: product.name,
@@ -83,7 +86,7 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> updateProduct(Product product) async {
-    int index = _items.indexWhere((p) => p.id == product.id);
+    int index = item.indexWhere((p) => p.id == product.id);
     if (index >= 0) {
       await http.patch(
           Uri.parse('${Constants.productBaseUrl}/${product.id}.json'),
@@ -95,17 +98,17 @@ class ProductList with ChangeNotifier {
             "isFavorite": product.isFavorite,
           }));
 
-      _items[index] = product;
+      item[index] = product;
       notifyListeners();
     }
   }
 
   Future<void> removeProduct(Product product) async {
-    int index = _items.indexWhere((p) => p.id == product.id);
+    int index = item.indexWhere((p) => p.id == product.id);
     if (index >= 0) {
-      final product = _items[index];
+      final product = item[index];
 
-      _items.remove(product);
+      item.remove(product);
       notifyListeners();
 
       final response = await http.delete(
@@ -113,7 +116,7 @@ class ProductList with ChangeNotifier {
       );
 
       if (response.statusCode >= 400) {
-        _items.insert(index, product);
+        item.insert(index, product);
         notifyListeners();
         throw HttpException(
           msg: 'Não foi possível excluir o produto.',
