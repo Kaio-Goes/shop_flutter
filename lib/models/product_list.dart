@@ -24,8 +24,8 @@ class ProductList with ChangeNotifier {
   Future<void> loadProducts() async {
     item.clear();
 
-    final response =
-        await http.get(Uri.parse("${Constants.productBaseUrl}.json?auth=$token"));
+    final response = await http
+        .get(Uri.parse("${Constants.productBaseUrl}.json?auth=$token"));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -62,25 +62,24 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final response =
-        await http.post(Uri.parse('${Constants.productBaseUrl}.json?auth=$token'),
-            body: jsonEncode({
-              "name": product.name,
-              "description": product.description,
-              "price": product.price,
-              "imageUrl": product.imageUrl,
-              "isFavorite": product.isFavorite,
-            }));
+    final response = await http.post(
+        Uri.parse('${Constants.productBaseUrl}.json?auth=$token'),
+        body: jsonEncode({
+          "name": product.name,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+        }));
 
     final id = jsonDecode(response.body)['name'];
     item.add(
       Product(
-          id: id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          isFavorite: product.isFavorite),
+        id: id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      ),
     );
     notifyListeners();
   }
@@ -89,13 +88,13 @@ class ProductList with ChangeNotifier {
     int index = item.indexWhere((p) => p.id == product.id);
     if (index >= 0) {
       await http.patch(
-          Uri.parse('${Constants.productBaseUrl}/${product.id}.json?auth=$token'),
+          Uri.parse(
+              '${Constants.productBaseUrl}/${product.id}.json?auth=$token'),
           body: jsonEncode({
             "name": product.name,
             "description": product.description,
             "price": product.price,
             "imageUrl": product.imageUrl,
-            "isFavorite": product.isFavorite,
           }));
 
       item[index] = product;
