@@ -19,7 +19,7 @@ class Auth with ChangeNotifier {
     return isAuth ? _token : null;
   }
 
-    String? get email {
+  String? get email {
     return isAuth ? _email : null;
   }
 
@@ -58,5 +58,13 @@ class Auth with ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
+  }
+
+  void logout() {
+    _token = null;
+    _email = null;
+    _userId = null;
+    _expiryDate = null;
+    notifyListeners();
   }
 }
