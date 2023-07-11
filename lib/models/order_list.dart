@@ -57,6 +57,7 @@ class OrderList with ChangeNotifier {
 
   Future<void> loadOrders() async {
     List<Order> itemLoad = [];
+
     final response = await http
         .get(Uri.parse("${Constants.ordertBaseUrl}}/$userId.json?auth=$token"));
     if (response.body == 'null') return;

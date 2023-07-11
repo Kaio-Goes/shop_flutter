@@ -51,7 +51,7 @@ class Auth with ChangeNotifier {
       _userId = body['localId'];
       _expiryDate =
           DateTime.now().add(Duration(seconds: int.parse(body['expiresIn'])));
-      Store.saveMap('userDate', {
+      Store.saveMap('userData', {
         'token': _token,
         'email': _email,
         'userId': _userId,
@@ -73,7 +73,7 @@ class Auth with ChangeNotifier {
   Future<void> tryAutoLogin() async {
     if (isAuth) return;
 
-    final userData = await Store.getMap('userDate');
+    final userData = await Store.getMap('userData');
 
     if (userData.isEmpty) return;
 

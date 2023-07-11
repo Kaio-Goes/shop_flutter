@@ -12,7 +12,8 @@ class AuthForm extends StatefulWidget {
   State<AuthForm> createState() => _AuthFormState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormState extends State<AuthForm>
+    with SingleTickerProviderStateMixin {
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
@@ -22,6 +23,31 @@ class _AuthFormState extends State<AuthForm> {
     'password': '',
   };
 
+  AnimationController? _controller;
+  Animation<Size>? _heightAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
+
+    _heightAnimation = Tween(
+      begin: const Size(double.infinity, 350),
+      end: const Size(double.infinity, 410),
+    ).animate(
+      CurvedAnimation(parent: _controller!, curve: Curves.linear),
+    );
+    _heightAnimation?.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
+  }
+
   bool _isLogin() => _authMode == AuthMode.login;
   bool _isSignup() => _authMode == AuthMode.signup;
 
@@ -29,8 +55,10 @@ class _AuthFormState extends State<AuthForm> {
     setState(() {
       if (_isLogin()) {
         _authMode = AuthMode.signup;
+        _controller?.forward();
       } else {
         _authMode = AuthMode.login;
+        _controller?.reverse();
       }
     });
   }
@@ -70,7 +98,7 @@ class _AuthFormState extends State<AuthForm> {
       }
     } on AuthExcpetion catch (error) {
       _showErroDialog(error.toString());
-    } catch(error) {
+    } catch (error) {
       _showErroDialog('Ocorreu um erro inesperado');
     }
 
@@ -87,7 +115,7 @@ class _AuthFormState extends State<AuthForm> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         padding: const EdgeInsets.all(16),
-        height: _isLogin() ? 340 : 400,
+        height: _heightAnimation?.value.height ?? (_isLogin() ? 350 : 410),
         width: deviceSize.width * 0.85,
         child: Form(
             key: formKey,
