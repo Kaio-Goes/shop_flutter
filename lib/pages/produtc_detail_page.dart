@@ -16,13 +16,31 @@ class ProductDetailPage extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text(product.name,style: const TextStyle(fontSize: 20),),
-              background:  Hero(
-                tag: product.id,
-                child: Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                ),
+              title: Text(
+                product.name,
+                style: const TextStyle(fontSize: 20),
+              ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Hero(
+                    tag: product.id,
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const DecoratedBox(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                    begin: Alignment(0, 0.8),
+                    end: Alignment(0, 0),
+                    colors: [
+                      Color.fromRGBO(0, 0, 0, 0.6),
+                      Color.fromRGBO(0, 0, 0, 0)
+                    ],
+                  )))
+                ],
               ),
             ),
           ),
@@ -43,13 +61,6 @@ class ProductDetailPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(
-              height: 1000,
-            ),
-            Text(
-              'fim',
-              textAlign: TextAlign.center,
-            )
           ]))
         ],
       ),
