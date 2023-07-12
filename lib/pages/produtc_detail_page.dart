@@ -9,39 +9,50 @@ class ProductDetailPage extends StatelessWidget {
     final Product product =
         ModalRoute.of(context)!.settings.arguments as Product;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.name),
-      ),
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: Hero(
-              tag: product.id,
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text(product.name,style: const TextStyle(fontSize: 20),),
+              background:  Hero(
+                tag: product.id,
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            "R\$ ${product.price}",
-            style: const TextStyle(color: Colors.grey, fontSize: 20),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            width: double.infinity,
-            child: Text(
-              product.description,
+          SliverList(
+              delegate: SliverChildListDelegate([
+            const SizedBox(height: 10),
+            Text(
+              "R\$ ${product.price}",
               textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey, fontSize: 20),
             ),
-          )
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Text(
+                product.description,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(
+              height: 1000,
+            ),
+            Text(
+              'fim',
+              textAlign: TextAlign.center,
+            )
+          ]))
         ],
-      )),
+      ),
     );
   }
 }
