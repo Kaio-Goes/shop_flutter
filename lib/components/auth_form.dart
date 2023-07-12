@@ -39,7 +39,6 @@ class _AuthFormState extends State<AuthForm>
     ).animate(
       CurvedAnimation(parent: _controller!, curve: Curves.linear),
     );
-    _heightAnimation?.addListener(() => setState(() {}));
   }
 
   @override
@@ -111,81 +110,85 @@ class _AuthFormState extends State<AuthForm>
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Card(
-      elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        height: _heightAnimation?.value.height ?? (_isLogin() ? 350 : 410),
-        width: deviceSize.width * 0.85,
-        child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'E-mail'),
-                  keyboardType: TextInputType.emailAddress,
-                  onSaved: (email) => _authData['email'] = email ?? '',
-                  validator: (value) {
-                    final email = value ?? '';
-                    if (email.trim().isEmpty || !email.contains('@')) {
-                      return 'Informe um e-mail válido.';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: 'Senha'),
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: true,
-                  controller: passwordController,
-                  onSaved: (password) => _authData['password'] = password ?? '',
-                  validator: (password) {
-                    final pass = password ?? '';
-                    if (pass.isEmpty || pass.length < 5) {
-                      return 'Informe uma senha válida';
-                    }
-                    return null;
-                  },
-                ),
-                if (_isSignup())
+        elevation: 8,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: AnimatedBuilder(
+          animation: _heightAnimation!,
+          child: Form(
+              key: formKey,
+              child: Column(
+                children: [
                   TextFormField(
-                    decoration:
-                        const InputDecoration(labelText: 'Confirmar Senha'),
+                    decoration: const InputDecoration(labelText: 'E-mail'),
+                    keyboardType: TextInputType.emailAddress,
+                    onSaved: (email) => _authData['email'] = email ?? '',
+                    validator: (value) {
+                      final email = value ?? '';
+                      if (email.trim().isEmpty || !email.contains('@')) {
+                        return 'Informe um e-mail válido.';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Senha'),
                     keyboardType: TextInputType.emailAddress,
                     obscureText: true,
-                    validator: _isLogin()
-                        ? null
-                        : (password) {
-                            final pass = password ?? '';
-                            if (pass != passwordController.text) {
-                              return 'Senhas informadas não conferem.';
-                            }
-                            return null;
-                          },
+                    controller: passwordController,
+                    onSaved: (password) =>
+                        _authData['password'] = password ?? '',
+                    validator: (password) {
+                      final pass = password ?? '';
+                      if (pass.isEmpty || pass.length < 5) {
+                        return 'Informe uma senha válida';
+                      }
+                      return null;
+                    },
                   ),
-                const SizedBox(height: 20),
-                if (isLoading)
-                  const CircularProgressIndicator()
-                else
-                  ElevatedButton(
-                    onPressed: _sumbit,
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 35, vertical: 15)),
+                  if (_isSignup())
+                    TextFormField(
+                      decoration:
+                          const InputDecoration(labelText: 'Confirmar Senha'),
+                      keyboardType: TextInputType.emailAddress,
+                      obscureText: true,
+                      validator: _isLogin()
+                          ? null
+                          : (password) {
+                              final pass = password ?? '';
+                              if (pass != passwordController.text) {
+                                return 'Senhas informadas não conferem.';
+                              }
+                              return null;
+                            },
+                    ),
+                  const SizedBox(height: 20),
+                  if (isLoading)
+                    const CircularProgressIndicator()
+                  else
+                    ElevatedButton(
+                      onPressed: _sumbit,
+                      style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 35, vertical: 15)),
+                      child: Text(
+                          _authMode == AuthMode.login ? 'ENTRAR' : 'REGISTRAR'),
+                    ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: _swithAuthMode,
                     child: Text(
-                        _authMode == AuthMode.login ? 'ENTRAR' : 'REGISTRAR'),
+                        _isLogin() ? 'DESEJA REGISTRAR?' : 'JÁ POSSUI CONTA?'),
                   ),
-                const Spacer(),
-                TextButton(
-                  onPressed: _swithAuthMode,
-                  child: Text(
-                      _isLogin() ? 'DESEJA REGISTRAR?' : 'JÁ POSSUI CONTA?'),
-                ),
-              ],
-            )),
-      ),
-    );
+                ],
+              )),
+          builder: (ctx, childForm) => Container(
+              padding: const EdgeInsets.all(16),
+              height:
+                  _heightAnimation?.value.height ?? (_isLogin() ? 350 : 410),
+              width: deviceSize.width * 0.85,
+              child: childForm),
+        ));
   }
 }
