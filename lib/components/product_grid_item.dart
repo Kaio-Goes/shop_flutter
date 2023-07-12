@@ -22,7 +22,7 @@ class ProductGridItem extends StatelessWidget {
             leading: Consumer<Product>(
               builder: (ctx, product, _) => IconButton(
                 onPressed: () {
-                  product.toggleFavorite(auth.token ?? '', auth.userId?? '');
+                  product.toggleFavorite(auth.token ?? '', auth.userId ?? '');
                 },
                 icon: Icon(product.isFavorite
                     ? Icons.favorite
@@ -53,8 +53,10 @@ class ProductGridItem extends StatelessWidget {
             ),
           ),
           child: GestureDetector(
-            child: Image.network(
-              product.imageUrl,
+            child: FadeInImage(
+              placeholder:
+                  const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
               fit: BoxFit.cover,
             ),
             onTap: () {
